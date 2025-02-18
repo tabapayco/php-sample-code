@@ -1,0 +1,32 @@
+<?php
+include('TabaPay.php');
+
+// Create Transaction
+$merchantToken = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
+$tabapayAPI = new TabaPayAPI($merchantToken);
+$data = array(
+    'amount' => 10000, // Rials
+    'callbackURL' => "https://test.ir/Verify.php",
+    'mobile' => null,
+    'email' => null,
+    'name' => null,
+    'sms' => 0, // True or False
+    'cardNumber' => null,
+    'nationalCode' => null,
+    'description' => null,
+    'additionalData' => null,
+);
+$responseData = $tabapayAPI->CreateTransaction($data);
+// Check the decoded response
+if (!empty($responseData) && $responseData['status'] == "success" && !empty($responseData['url'])) {
+    // Redirect to the payment URL
+    header('Location :' . $responseData['url']);
+} else {
+    $responseData = array(
+        "status" => $responseData['status'],
+        "responseCode" => $responseData['responseCode'],
+        "message" => $responseData['message']
+    );
+    echo json_encode($responseData);
+}
+?>
